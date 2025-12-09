@@ -120,3 +120,6 @@ Common labels: `service_name`, `environment`, and `mode` (live/history); market 
 - BigQuery table is ensured on start (partition by timestamp, cluster by exchange/symbol).
 - Logs are structured JSON to stdout and Loki (if configured).
 
+## Acknowledgment
+Thanks to the authors of [cursor-memory-bank](https://github.com/vanzan01/cursor-memory-bank) for their work—their project helped accelerate this one.
+
