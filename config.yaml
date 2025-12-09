@@ -1,0 +1,12 @@
+settings:
+  update_interval_seconds: 60
+  backoff_base: 1.0
+  backoff_factor: 2.0
+  backoff_max: 32.0
+  backoff_attempts: 5
+
+exchanges:
+  cryptocom:
+    - symbol: "BTC/USDT"
+      timeframes: ["1M", "1w", "1d"]
+
