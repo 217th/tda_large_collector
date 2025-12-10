@@ -7,6 +7,7 @@ def test_config_loader_parses_yaml(tmp_path):
         """
 settings:
   update_interval_seconds: 30
+  history_page_limit: 150
 exchanges:
   binance:
     - symbol: "BTC/USDT"
@@ -17,6 +18,7 @@ exchanges:
 
     cfg = load_config(str(cfg_file))
     assert cfg.settings.update_interval_seconds == 30
+    assert cfg.settings.history_page_limit == 150
     assert "binance" in cfg.exchanges
     pair = cfg.exchanges["binance"][0]
     assert pair.symbol == "BTC/USDT"

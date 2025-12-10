@@ -51,6 +51,7 @@ def run_history_loop(
     bq_client=None,
     dataset="crypto",
     table="market_data_ohlcv",
+    page_limit: int = 200,
     timeframe_window_ms: int = 60_000,
     backoff_cfg=None,
 ):
@@ -69,7 +70,7 @@ def run_history_loop(
         while cursor < end_ms:
             try:
                 rows = retry_with_backoff(
-                    fetch_page_fn, (client, symbol, timeframe, cursor), **backoff_cfg
+                    fetch_page_fn, (client, symbol, timeframe, cursor, page_limit), **backoff_cfg
                 )
                 if not rows:
                     break

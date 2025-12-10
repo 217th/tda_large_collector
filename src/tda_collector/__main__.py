@@ -107,6 +107,7 @@ def main():
             bq_client=bq_client,
             dataset=args.dataset,
             table=args.table,
+            page_limit=cfg.settings.history_page_limit,
             backoff_cfg=backoff_cfg,
         )
 

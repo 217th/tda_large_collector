@@ -10,6 +10,7 @@ class Settings:
     backoff_factor: float = 2.0
     backoff_max: float = 32.0
     backoff_attempts: int = 5
+    history_page_limit: int = 200
 
 
 @dataclass

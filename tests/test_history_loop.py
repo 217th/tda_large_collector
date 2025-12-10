@@ -18,8 +18,11 @@ def test_history_loop_paginates_and_inserts(monkeypatch):
 
     fetch_calls = []
 
+    limits_seen = []
+
     def fake_fetch_page(client_arg, symbol, timeframe, since_ms, limit=200):
         fetch_calls.append(since_ms)
+        limits_seen.append(limit)
         if len(fetch_calls) == 1:
             return [row, row2]
         return []
@@ -41,8 +44,10 @@ def test_history_loop_paginates_and_inserts(monkeypatch):
         dataset="crypto",
         table="market_data_ohlcv",
         timeframe_window_ms=60_000,
+        page_limit=123,
     )
 
     assert len(inserted) == 2
     assert fetch_calls[0] == 0
+    assert all(limit == 123 for limit in limits_seen)
 

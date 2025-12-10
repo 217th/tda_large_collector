@@ -115,6 +115,14 @@
 - Lessons: Update only missing fields on existing BQ tables; guard inserts with one-time ensure; emit early breadcrumbs before storage init.
 - Next steps: Add optional `bq_ensure_table` log; consider admin CLI for safe schema repair.
 
+## Reflection (history page limit doc)
+- Status: Reflection recorded in `memory-bank/reflection/reflection-history-page-limit.md`
+- Scope: Documented that `history_page_limit` caps candles per request and pagination continues until the interval is fully fetched.
+
+## Archive (history page limit doc)
+- Status: Archived in `memory-bank/archive/archive-history-page-limit.md`
+- Notes: README/config updated; pagination behavior clarified for history mode.
+
 ## Creative Decisions (Architecture, Data, Resilience, Logging)
 
 📌 CREATIVE PHASE: Architecture & Data Model

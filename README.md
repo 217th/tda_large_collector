@@ -26,17 +26,16 @@ settings:
   backoff_factor: 2.0
   backoff_max: 32.0
   backoff_attempts: 5
+  history_page_limit: 200
 
 exchanges:
-  binance:
-    - symbol: "BTC/USDT"
-      timeframes: ["1m", "1h"]
-    - symbol: "ETH/USDT"
-      timeframes: ["1h"]
-  kraken:
-    - symbol: "SOL/USD"
-      timeframes: ["4h"]
+  bybit:
+    - symbol: "BTCUSDT"
+      timeframes: ["1w", "1d", "1h"]
+  # bybit symbols: https://bybit-exchange.github.io/docs/v5/enum#symbol
 ```
+
+`history_page_limit` — максимальное число свечей за один запрос в history mode; если в заданном интервале доступно больше записей, планировщик выполнит несколько последовательных запросов, пока не получит все доступные данные.
 
 Environment variables (loaded from `.env` if present when running locally, or pass via Docker envs; `.env` values now override existing env to align with loki_push.py behavior):
 - `GOOGLE_APPLICATION_CREDENTIALS`: Path to BigQuery service account JSON

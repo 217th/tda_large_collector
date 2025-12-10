@@ -24,6 +24,7 @@ def load_config(path: str) -> Config:
         backoff_factor=float(settings_data.get("backoff_factor", 2.0)),
         backoff_max=float(settings_data.get("backoff_max", 32.0)),
         backoff_attempts=int(settings_data.get("backoff_attempts", 5)),
+        history_page_limit=int(settings_data.get("history_page_limit", 200)),
     )
 
     exchanges: Dict[str, List[ExchangePair]] = {}

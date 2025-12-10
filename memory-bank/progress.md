@@ -14,6 +14,7 @@
 ## ARCHIVE Mode - ✅ COMPLETE
   - Level 4 archive: `memory-bank/archive/archive-tda-collector.md`
   - Level 1 archive: `memory-bank/archive/archive-iso8601-history.md`
+  - Level 2 archive: `memory-bank/archive/archive-history-page-limit.md`
 Validated: dependencies/pins, config/logging shape, Docker plan, POC design, pytest discovery baseline.
 
 ### Completed Steps
