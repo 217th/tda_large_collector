@@ -57,6 +57,14 @@ def run_history_loop(
     labels = {**env_labels(), "mode": "history"}
     backoff_cfg = backoff_cfg or {}
     for client, symbol, timeframe, start_ms, end_ms in tasks:
+        # Derive step from exchange timeframe parsing when available; fallback to provided window.
+        step_ms = timeframe_window_ms
+        if hasattr(client, "parse_timeframe"):
+            try:
+                step_ms = int(client.parse_timeframe(timeframe) * 1000)
+            except Exception:
+                step_ms = timeframe_window_ms
+
         cursor = start_ms
         while cursor < end_ms:
             try:
@@ -65,15 +73,35 @@ def run_history_loop(
                 )
                 if not rows:
                     break
-                retry_with_backoff(
-                    storage_fn, (bq_client, dataset, table, rows), **backoff_cfg
-                )
-                cursor = int(rows[-1].timestamp.timestamp() * 1000 + timeframe_window_ms)
-                log_struct(
-                    logger,
-                    {**labels, "exchange": client.id, "symbol": symbol, "timeframe": timeframe},
-                    {"event": "history_page_done", "message": "inserted page", "rows": len(rows)},
-                )
+                # Keep only candles inside the requested window.
+                bounded_rows = [
+                    row for row in rows if cursor <= int(row.timestamp.timestamp() * 1000) < end_ms
+                ]
+                if bounded_rows:
+                    retry_with_backoff(
+                        storage_fn, (bq_client, dataset, table, bounded_rows), **backoff_cfg
+                    )
+                    cursor = int(bounded_rows[-1].timestamp.timestamp() * 1000 + step_ms)
+                    log_struct(
+                        logger,
+                        {**labels, "exchange": client.id, "symbol": symbol, "timeframe": timeframe},
+                        {
+                            "event": "history_page_done",
+                            "message": "inserted page",
+                            "rows": len(bounded_rows),
+                            "cursor_ms": cursor,
+                        },
+                    )
+                else:
+                    # No rows inside the requested window; advance cursor using the fetched page.
+                    first_ms = int(rows[0].timestamp.timestamp() * 1000)
+                    last_ms = int(rows[-1].timestamp.timestamp() * 1000)
+                    cursor = int(last_ms + step_ms)
+                    if first_ms >= end_ms:
+                        break
+
+                if cursor >= end_ms:
+                    break
             except Exception as exc:  # pragma: no cover - runtime guard
                 log_struct(
                     logger,

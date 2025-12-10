@@ -13,6 +13,22 @@ from tda_collector.scheduler import run_history_loop, run_live_loop
 from tda_collector.storage import ensure_table
 
 
+def parse_iso8601_to_ms(value: str) -> int:
+    """Parse ISO8601 string to epoch milliseconds, handling trailing Z/UTC."""
+    if not value:
+        raise ValueError("ISO8601 timestamp is required")
+
+    normalized = value.strip()
+    if normalized.endswith("Z"):
+        normalized = f"{normalized[:-1]}+00:00"
+
+    dt = datetime.fromisoformat(normalized)
+    if dt.tzinfo is None:
+        dt = dt.replace(tzinfo=timezone.utc)
+
+    return int(dt.timestamp() * 1000)
+
+
 def parse_args():
     parser = argparse.ArgumentParser(description="TDA Large Collector")
     parser.add_argument("--mode", choices=["live", "history"], default="live")
@@ -47,6 +63,14 @@ def main():
     bq_client = bigquery.Client()
     ensure_table(bq_client, args.dataset, args.table)
 
+    start_ms = end_ms = None
+    if args.mode == "history":
+        if not args.start:
+            raise ValueError("--start is required for history mode")
+        start_ms = parse_iso8601_to_ms(args.start)
+        end_input = args.end or datetime.now(tz=timezone.utc).isoformat()
+        end_ms = parse_iso8601_to_ms(end_input)
+
     tasks_live = []
     tasks_history = []
     for ex_name, pairs in cfg.exchanges.items():
@@ -55,10 +79,6 @@ def main():
             for tf in pair.timeframes:
                 tasks_live.append((client, pair.symbol, tf))
                 if args.mode == "history":
-                    start_iso = args.start
-                    end_iso = args.end or datetime.now(tz=timezone.utc).isoformat()
-                    start_ms = int(datetime.fromisoformat(start_iso).timestamp() * 1000)
-                    end_ms = int(datetime.fromisoformat(end_iso).timestamp() * 1000)
                     tasks_history.append((client, pair.symbol, tf, start_ms, end_ms))
 
     log_struct(logger, {**env_labels(), "mode": args.mode}, {"event": "config_loaded"})

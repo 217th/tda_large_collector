@@ -11,8 +11,9 @@
 ## BUILD Mode - ✅ COMPLETE
 
 ## REFLECT Mode - ✅ COMPLETE (see `memory-bank/reflection/reflection-build.md`)
-
-## ARCHIVE Mode - ✅ COMPLETE (see `memory-bank/archive/archive-tda-collector.md`)
+## ARCHIVE Mode - ✅ COMPLETE
+  - Level 4 archive: `memory-bank/archive/archive-tda-collector.md`
+  - Level 1 archive: `memory-bank/archive/archive-iso8601-history.md`
 Validated: dependencies/pins, config/logging shape, Docker plan, POC design, pytest discovery baseline.
 
 ### Completed Steps

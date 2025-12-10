@@ -1,5 +1,8 @@
 # Active Context
 
+## Current Mode: Idle
+- Ready for next task. Recent fix archived in `memory-bank/archive/archive-iso8601-history.md`.
+
 ## Current Mode: PLAN (Task Planning - Level 4)
 
 ## Platform Detection
